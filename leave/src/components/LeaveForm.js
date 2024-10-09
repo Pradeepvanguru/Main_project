@@ -68,7 +68,7 @@ function LeaveForm() {
   const onSubmit = (data, event) => {
     event.preventDefault();
     setIsSubmitting(true);
-    axios.post(' http://localhost:5000/api/leave', data)
+    axios.post(' https://main-project-ir2k.onrender.com/api/leave', data)
       .then((response) => {
         reset();
         navigate('/');
@@ -82,7 +82,7 @@ function LeaveForm() {
 
   const fetchFacultyData = async ({ email, branch, sem, year }) => {
     try {
-      const response = await axios.post(' http://localhost:5000/api/getFacultyData', { email, branch, sem, year });
+      const response = await axios.post(' https://main-project-ir2k.onrender.com/api/getFacultyData', { email, branch, sem, year });
       if (response.data) {
         setFacultyNames(response.data.name);
         setSubjects(response.data.subjects || '');
