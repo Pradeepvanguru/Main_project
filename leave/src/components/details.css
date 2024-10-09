@@ -1,0 +1,139 @@
+/* HomePage.css */
+
+/* General styles */
+.container-fluid {
+  background-color: #deefff; /* Light background for better contrast */
+  border-radius: 1rem;
+}
+
+/* Responsive image */
+.container img {
+  max-width: 100%;  /* Makes image responsive */
+  height: auto;     /* Maintain aspect ratio */
+}
+
+/* Table responsive styles */
+.table-responsive {
+  overflow-x: auto; /* Allow horizontal scrolling */
+  overflow-y: hidden; /* Hide vertical overflow */
+}
+
+/* Table styles */
+.table {
+  width: 100%; /* Make the table full width */
+  border-collapse: collapse; /* Remove gaps between cells */
+  min-width: 600px; /* Minimum width to prevent compression */
+}
+
+/* Table header styles */
+.table thead th {
+  background-color: #343a40; /* Dark background for the header */
+  color: white; /* White text for better contrast */
+  font-size: 1rem; /* Font size for header */
+}
+
+/* Table row hover effect */
+.table tbody tr:hover {
+  background-color: #e9ecef; /* Light grey on row hover */
+}
+
+/* Table cell padding */
+.table td, .table th {
+  padding: 8px; /* Reduced padding for better spacing */
+  text-align: left; /* Align text to the left */
+  border: 1px solid #dee2e6; /* Add border for clarity */
+}
+
+/* Decrease font size in rows */
+.table tbody td {
+  font-size: 0.75rem; /* Smaller font size for all table rows */
+}
+
+/* Button styles */
+.btn {
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Hover effect for buttons */
+.btn:hover {
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Media queries for responsive text */
+@media (max-width: 768px) {
+  h1 {
+      font-size: 1.5rem; /* Smaller heading on mobile */
+  }
+
+  p {
+      font-size: 1rem;  /* Smaller paragraph text */
+  }
+
+  .btn {
+      width: 100%; /* Full width buttons on small devices */
+      margin: 10px 0; /* Margin for spacing */
+  }
+
+  /* Adjustments for tables on smaller screens */
+  .table td, .table th {
+      font-size: 0.75rem; /* Slightly smaller font for mobile */
+      padding: 8px; /* Reduce padding on smaller screens */
+  }
+
+  /* Specific adjustments for mobile view */
+  .table tbody tr td.branch,
+  .table tbody tr td.semester,
+  .table tbody tr td.year {
+      font-size: 0.65rem; /* Smaller font size for these columns */
+      padding: 4px; /* Reduced padding for these columns */
+  }
+
+  .table tbody tr td.your-name,
+  .table tbody tr td.faculty-subject,
+  .table tbody tr td.faculty-name {
+      font-size: 0.9rem; /* Increased font size for these columns */
+      padding: 12px; /* Increased padding for better spacing */
+  }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 576px) {
+  .p-md-5 {
+      padding: 2rem !important; /* Adjust padding for smaller devices */
+  }
+  h5{
+    font-size: 1px;
+  }
+
+  .bg-white {
+      padding: 20px; /* Add some padding for the white background */
+  }
+
+  .btn{
+      width: 30%;
+      margin: 1px;
+  }
+  /* Additional table adjustments */
+  .table {
+      font-size: 0.65rem; /* Smaller font size for very small devices */
+  }
+
+  .table tbody td {
+      font-size: 0.65rem; /* Further reduce font size in rows */
+  }
+
+  /* Additional adjustments for specific columns */
+  .table tbody tr td.branch,
+  .table tbody tr td.semester,
+  .table tbody tr td.year {
+      font-size: 0.55rem; /* Further reduce font size */
+      padding: 2px; /* Further reduce padding */
+  }
+
+  .table tbody tr td.your-name,
+  .table tbody tr td.faculty-subject,
+  .table tbody tr td.faculty-name {
+      font-size: 0.55rem; /* Slightly decrease font size for these columns */
+      padding: 10px; /* Adjust padding for better spacing */
+  }
+}

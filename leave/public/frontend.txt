@@ -1,0 +1,717 @@
+registrationForm.js
+
+//code
+
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+
+
+const RegistrationForm = () => {
+  const [formData, setFormData] = useState({
+    year: '',
+    sem: '',
+    email: '',
+    section: '',
+    branch: '',
+    name: '',
+    subj: ''
+  });
+  
+  const [subjects, setSubjects] = useState([]);
+  const [sections, setSections] = useState([]);
+
+  const subjectsData = {
+    1: {
+      1: ['Maths', 'Physics', 'Chemistry', 'English', 'Computer Science', 'Electronics'],
+      2: ['Biology', 'Statistics', 'History', 'Geography', 'C Programming', 'Data Structures']
+    },
+    2: {
+      3: ['Database Management Systems', 'Data Communication Systems', 'OOP through Java', 'Discrete Mathematical Structures', 'Digital Logic Design', 'Python programming and Applications'],
+      4: ['Web Development', 'Mobile Apps', 'Machine Learning', 'AI', 'Ethical Hacking', 'Cloud Computing']
+    },
+    3: {
+      5: ['Distributed Systems', 'ToC', 'Compiler Design', 'Data Analytics', 'Cyber Security', 'Big Data'],
+      6: ['Quantum Computing', 'Embedded Systems', 'Data Mining', 'Game Development', 'Web Security', 'Blockchain']
+    },
+    4: {
+      7: ['Project Management', 'Information Retrieval', 'HCI', 'IT Ethics', 'E-Commerce', 'Digital Marketing'],
+      8: ['Research Methodology', 'Software Testing', 'Data Visualization', 'System Modeling', 'DevOps', 'Content Management']
+    }
+  };
+
+  const branches = ["IT", "CSE", "MECH", "Civil", "EEE", "ECE", "AIDS"];
+  const sectionsData = {
+    IT: ['A', 'B'],
+    CSE: ['A', 'B'],
+    MECH: ['A', 'B', 'C'],
+    Civil: ['A', 'B'],
+    EEE: ['A', 'B'],
+    ECE: ['A', 'B'],
+    AIDS: ['A', 'B']
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+
+    // Handle year change
+    if (name === 'year') {
+      setFormData(prevData => ({ ...prevData, sem: '', subj: '' }));
+    }
+
+    // Handle semester change
+    if (name === 'sem') {
+      setSubjects(subjectsData[formData.year][value]);
+    }
+  };
+
+  const handleBranchChange = (e) => {
+    const selectedBranch = e.target.value;
+    setFormData(prevData => ({ ...prevData, branch: selectedBranch, section: '' })); // Reset section when branch changes
+    setSections(sectionsData[selectedBranch] || []); // Update sections based on selected branch
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:5000/registers', formData);
+      alert("Registration successful...!!");
+      console.log(response);
+    } catch (error) {
+      console.error('There was an error registering!', error);
+      alert('Registration failed!');
+    }
+  };
+
+  const getSemesters = (year) => {
+    switch (year) {
+      case '1': return [1, 2];
+      case '2': return [3, 4];
+      case '3': return [5, 6];
+      case '4': return [7, 8];
+      default: return [];
+    }
+  };
+
+  return (
+    <div className='col-sm-12 container p-4'>
+      <div>
+        <Link to="/" className="btn btn-primary mx-2">
+          <h4>&#8592; Back</h4>
+        </Link>
+      </div>
+      <div className='col-sm-9 container rounded'>
+        <div className='bg-warning rounded p-4'>
+          <form onSubmit={handleSubmit}>
+            <center><h3>Registration Form</h3><br /></center>
+
+            <div className='row' style={{ float: 'left' }}>
+              <div className='col-md-6'>
+                <div className='form-group'>
+                  <label className='fw-bold'>Branch</label>
+                  <select className='form-control mb-3' name="branch" value={formData.branch} onChange={handleBranchChange} required>
+                    <option value="">Select Branch</option>
+                    {branches.map((branch, index) => (
+                      <option key={index} value={branch}>{branch}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className='col-md-6'>
+                <div className='form-group'>
+                  <label className='fw-bold'>Year</label>
+                  <select className='form-control mb-3' name="year" value={formData.year} onChange={handleChange} required>
+                    <option value="">Select Year</option>
+                    <option value="1">1 year</option>
+                    <option value="2">2 year</option>
+                    <option value="3">3 year</option>
+                    <option value="4">4 year</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className='row'>
+              <div className='col-md-6'>
+                <div className='form-group'>
+                  <label className='fw-bold'>Semester</label>
+                  <select className='form-control mb-3' name="sem" value={formData.sem} onChange={handleChange} required disabled={!formData.year}>
+                    <option value="">Select Semester</option>
+                    {getSemesters(formData.year).map(sem => (
+                      <option key={sem} value={sem}>{sem} sem</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className='col-md-6'>
+                <div className='form-group'>
+                  <label className='fw-bold'>Section</label>
+                  <select className='form-control mb-3' name="section" value={formData.section} onChange={handleChange} required disabled={!formData.branch}>
+                    <option value="">Select Section</option>
+                    {sections.map((section) => (
+                      <option key={section} value={section}>{section}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>                 
+            </div>
+
+            <div className='row'>
+            <div className='col-md-6'>
+                <div className='form-group'>
+                  <label className='fw-bold'>Subject</label>
+                  <select className='form-control mb-3' name="subj" value={formData.subj} onChange={handleChange} required disabled={!formData.sem}>
+                    <option value="">Select Subject</option>
+                    {subjects.map(subj => (
+                      <option key={subj} value={subj}>{subj}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className='col-md-6'>
+                <div className='form-group'>
+                  <label className='fw-bold'>Name</label>
+                  <input className='form-control mb-3' name="name" value={formData.name} onChange={handleChange} required placeholder='Include Mr./Mrs.' />
+                </div>
+              </div>
+            </div>
+
+            <div className='row'>
+              <div className='col-md-6'>
+                <div className='form-group'>
+                  <label className='fw-bold'>Email</label>
+                  <input className='form-control mb-3' type="email" name="email" value={formData.email} onChange={handleChange} required placeholder='Enter your email' />
+                </div>
+              </div>
+            </div>
+
+            <center>
+              <button className='btn btn-primary w-100' type="submit">Register</button>
+            </center>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RegistrationForm;
+
+//Schema
+
+const mongoose = require('mongoose');
+
+const RegistrationSchema = new mongoose.Schema({
+  branch:String,
+  year:String,
+  sem:String, 
+  section:String,
+  email: String,
+  name:String,
+  subj: String
+
+  
+});
+const Registers = mongoose.model('Registers', RegistrationSchema);
+module.exports = Registers 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////---------------------------
+
+//leaveform.js
+
+//code
+
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+
+function LeaveForm() {
+  const { register, handleSubmit, watch, setValue } = useForm();
+  const [semesters, setSemesters] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [dayName, setDayName] = useState(''); // To store the day name
+  const [sections, setSections] = useState([]);
+  const [facultyNames, setFacultyNames] = useState([]);
+
+  const subjectsData = {
+    1: { 1: ['Maths', 'Physics', 'Chemistry', 'English', 'Computer Science', 'Electronics'],
+      2: ['Biology', 'Statistics', 'History', 'Geography', 'C Programming', 'Data Structures'] },
+
+    2: { 3: ['Database Management Systems', 'Data Communication Systems','OOP through Java','Discrete Mathematical Structures','Digital Logic Design','Python programming and Applications'],
+      4: ['Web Development', 'Mobile Apps', 'Machine Learning', 'AI', 'Ethical Hacking', 'Cloud Computing'] },
+
+    3: { 5: ['Distributed Systems', 'ToC', 'Compiler Design', 'Data Analytics', 'Cyber Security', 'Big Data'],
+      6: ['Quantum Computing', 'Embedded Systems', 'Data Mining', 'Game Development', 'Web Security', 'Blockchain'] },
+
+    4: { 7: ['Project Management', 'Information Retrieval', 'HCI', 'IT Ethics', 'E-Commerce', 'Digital Marketing'],
+      8: ['Research Methodology', 'Software Testing', 'Data Visualization', 'System Modeling', 'DevOps', 'Content Management'] },
+  };
+
+  const semestersData = {
+    1: [1, 2],
+    2: [3, 4],
+    3: [5, 6],
+    4: [7, 8],
+  };
+
+  // Time slots for periods
+  const periodTimes = {
+    1: { startTime: '09:00 AM', endTime: '10:00 AM' },
+    2: { startTime: '10:00 AM', endTime: '11:00 AM' },
+    3: { startTime: '11:10 AM', endTime: '12:10 PM' },
+    4: { startTime: '12:00 PM', endTime: '01:10 PM' },
+    5: { startTime: '02:00 PM', endTime: '03:00 PM' },
+    6: { startTime: '03:00 PM', endTime: '04:00 PM' },
+    7: { startTime: '04:00 PM', endTime: '05:00 PM' },
+  };
+
+  const onYearChange = (year) => {
+    setValue('sem', ''); // Reset semester and subjects when year changes
+    setSubjects([]); // Reset subjects when year changes
+    
+    if (year) {
+      setSemesters(semestersData[year]); // Update semesters based on year
+      handleSemesterChange(semestersData[year][0]); // Automatically set to first semester
+    } else {
+      setSemesters([]);
+    }
+  };
+
+  const handleSemesterChange = (sem) => {
+    const year = watch('year');
+    if (year) {
+      setSubjects(subjectsData[year][sem] || []); // Update subjects based on selected year and semester
+    }
+  };
+
+  // Function to get the day name from the selected date
+  const handleDateChange = (event) => {
+    const selectedDate = new Date(event.target.value);
+    const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+    setDayName(dayName); // Update day name state
+    setValue('dayName', dayName); // Update the form value for dayName
+  };
+
+  // Automatically update start and end times based on the selected period
+  const handlePeriodChange = (event) => {
+    const period = event.target.value;
+    if (periodTimes[period]) {
+      setValue('startTime', periodTimes[period].startTime); // Set start time
+      setValue('endTime', periodTimes[period].endTime); // Set end time
+    }
+  };
+
+  const onSubmit = (data) => {
+    axios.post('http://localhost:5000/api/leave', data)
+      .then((response) => {
+        alert('Class Adjustment Form submitted successfully');
+        console.log(response)
+      })
+      .catch((error) => {
+        alert("submit faild...!!")
+        console.error('There was an error submitting the form!', error);
+      });
+  };
+
+  const handleBranchChange = (branch) => {
+    setSections(sectionsData[branch]);
+    setValue('section', ''); // Reset section when branch changes
+  };
+
+  const branches = ["IT", "CSE", "MECH", "Civil", "EEE", "ECE", "AIDS"];
+  const sectionsData = {
+    IT: ['A', 'B'],
+    CSE: ['A', 'B'],
+    MECH: ['A', 'B','C'],
+    CIVIL: ['A', 'B'],
+    EEE: ['A', 'B'],
+    ECE: ['A', 'B'],
+    AIDS: ['A', 'B'],
+  };
+
+  // Fetch faculty names based on email from the registers database
+  const fetchFacultyNames = async (email) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/getFacultyNames', { email });
+      setFacultyNames(response.data.facultyNames || [] ); // Update faculty names
+      console.log(setFacultyNames)
+    } catch (error) {
+      
+      console.error('Error fetching faculty names', error);
+    }
+  };
+
+  useEffect(() => {
+    const email = watch('email');
+    if (email) {
+      fetchFacultyNames(email);
+    }
+  }, [watch('email')]); // Trigger the function when the email changes
+
+  return (
+    <div className='col-sm-12  p-3 container-fluid'>
+      <div  style={{ float: 'left' }}>
+        <Link to="/" className="btn btn-warning p-1 rounded-lg">
+          <h4>  &#8592; Back</h4>
+        </Link>
+      </div>
+
+      <div className='col-sm-10 container rounded ' style={{ float: 'left' }}>
+        <center className='col-sm-12 p-5 bg-primary rounded'>
+          <form onSubmit={handleSubmit(onSubmit)} className='form-group ' >
+            <h3><b className='bg-secondary p-1 rounded text-white shadow-lg'>Class_Adjustment_Form</b></h3><br />
+
+            {/* Branch ,year*/}
+            <div className='row' style={{ float: 'left' }}>
+              <div className='col-md-6'>
+                <b><label style={{ float: 'left' }} >Branch</label></b>
+                <select {...register('branch')} className='form-control mb-3' required onChange={(e) => handleBranchChange(e.target.value)}>
+                  <option value="">Select Branch</option>
+                  {branches.map((branch) => (
+                    <option key={branch} value={branch}>{branch}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Year */}
+              <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>Year</label></b>
+                <select {...register('year')} className='form-control mb-3' required onChange={(e) => onYearChange(e.target.value)}>
+                  <option value="">Select Year</option>
+                  <option value="1">1st Year</option>
+                  <option value="2">2nd Year</option>
+                  <option value="3">3rd Year</option>
+                  <option value="4">4th Year</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Semester & Section */}
+            <div className='row' >
+              <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>Semester</label></b>
+                <select {...register('sem')} className='form-control mb-3' required onChange={(e) => handleSemesterChange(e.target.value)}>
+                  <option value="">Select Semester</option>
+                  {(semesters || []).map((sem) => (
+                    <option key={sem} value={sem}>{sem} Semester</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>Section</label></b>
+                <select {...register('section')} className='form-control mb-3' required>
+                  <option value="">Select Section</option>
+                  {sections.map((section) => (
+                    <option key={section} value={section}>{section}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Subject & Email */}
+            <div className='row'>
+              <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>Subject</label></b>
+                <select {...register('subj')} className='form-control mb-3' required>
+                  <option value="">Select Subject</option>
+                  {(subjects || []).map((subject) => (
+                    <option key={subject} value={subject}>{subject}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>Email</label></b>
+                <input {...register('email')} type='email' className='form-control mb-3' required  placeholder='enter email'/>
+              </div>
+            </div>
+
+            {/* Faculty Name & period */}
+            <div className='row'>
+            <div className='col-md-6'>
+            <b><label style={{ float: 'left' }}>Faculty Name</label></b>
+            <input {...register('name')} type="name" className="form-control mb-3" required value={facultyNames} readOnly />
+            </div>
+           
+
+               {/* Leave Period & Date */}
+              <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>Which period you want Adjustment?</label></b>
+                <select {...register('period')} className='form-control mb-3' required onChange={handlePeriodChange}>
+                  <option value="">Select Period</option>
+                  <option value="1">Period 1</option>
+                  <option value="2">Period 2</option>
+                  <option value="3">Period 3</option>
+                  <option value="4">Period 4</option>
+                  <option value="5">Period 5</option>
+                  <option value="6">Period 6</option>
+                </select>
+              </div>
+            </div>
+
+           
+             {/* End time and start time */}
+             <div className='row' style={{ float: 'left' }}>
+             <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>Start Time</label></b>
+                <input {...register('startTime')} type='text' className='form-control mb-3' readOnly />
+              </div>
+             
+             <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>End Time</label></b>
+                <input {...register('endTime')} type='text' className='form-control mb-3' readOnly />
+              </div>
+              
+            </div>
+            
+            {/* Leave date and day */}
+            <div className='row'>
+            <div className='col-md-6'>
+                <b><label style={{ float: 'left' }}>Leave Date</label></b>
+                <input {...register('leaveDate')} type='date' className='form-control mb-3' required onChange={handleDateChange}  />
+              </div>
+
+              <div className='col-md-6'>
+               <b><label style={{ float: 'left' }}>Day</label></b>
+                <input {...register('dayName')} type='text' className='form-control mb-3' value={dayName} readOnly />
+            </div>
+            </div>
+
+            <button type="submit" className='btn btn-warning fs-5 w-100 mt-3 shadow-lg'>Submit</button>
+          </form>
+        </center>
+      </div>
+    </div>
+  );
+}
+
+export default LeaveForm;
+
+//sheema
+
+const mongoose = require('mongoose');
+
+const LeaveRequestSchema = new mongoose.Schema({
+  branch:String,
+  year:String,
+  sem:String,
+  subj: String,
+  section:String,
+  name: String,
+  email:String,
+  leaveDate: String,
+  period:String,
+  dayName:String,
+  startTime:String,
+  endTime:String,
+  status: { type: String, default: 'Pending' },
+  acceptedBy: String  
+
+});
+const LeaveRequest= mongoose.model('LeaveRequest', LeaveRequestSchema);
+module.exports = LeaveRequest
+
+--------------------------------------------------------------------------------------------------------------------------
+
+//details.js
+
+//code:
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+function Home() {
+  const [acceptedRequests, setAcceptedRequests] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Function to fetch user details by the acceptedBy key
+  const fetchUserDetails = async (acceptedBy) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/registers/${acceptedBy}`);
+      return response.data; // Assuming response.data contains user details
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      return null; // Return null if there's an error
+    }
+  };
+
+  // Fetch the accepted leave requests
+  const fetchAcceptedRequests = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:5000/api/leave'); // API to fetch accepted requests
+      const requests = response.data;
+
+      // Filter out requests older than 2 days
+      const filteredRequests = requests.filter((request) => {
+        const leaveDate = new Date(request.leaveDate);
+        const currentDate = new Date();
+        const differenceInDays = (currentDate - leaveDate) / (1000 * 3600 * 24);
+        return differenceInDays <= 2; // Keep requests that are 2 days old or newer
+      });
+
+      // Loop over the requests to find acceptedBy and fetch user details
+      const updatedRequests = await Promise.all(
+        filteredRequests.map(async (request) => {
+          if (request.acceptedBy) {
+            const userDetails = await fetchUserDetails(request.acceptedBy);
+            return { ...request, acceptedUserDetails: userDetails };
+          }
+          return request;
+        })
+      );
+
+      // Sort requests to show new requests first
+      updatedRequests.sort((a, b) => new Date(b.leaveDate) - new Date(a.leaveDate));
+
+      setAcceptedRequests(updatedRequests); // Update state with enriched requests
+    } catch (error) {
+      console.error('Error fetching accepted requests:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Call the fetch function once on component mount
+  useEffect(() => {
+    fetchAcceptedRequests();
+  }, []);
+
+  return (
+    <div className='container p-3'>
+      <div>
+        <div className="d-flex justify-content-between mb-2">
+          <h2><b>Faculty Details :</b></h2>
+          {/* Button to refresh the table data */}
+          <button
+            className="btn btn-dark mx-2 fs-5"
+            onClick={fetchAcceptedRequests}
+          >
+            &#x1F504; Refresh
+          </button>
+        </div>
+        <div>
+          {/* Display a loading message while fetching data */}
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <table className="table table-bordered table-lg  border-dark ">
+              <thead className='bg-warning text-center '>
+                <tr>
+                  <th>Serial No.</th> {/* New column for serial number */}
+                  {/* <th>Your Name</th> */}
+                  <th>Branch</th>
+                  <th>Leave Date</th>
+                  <th>Faculty Name</th>
+                  <th>Year</th>
+                  <th>Semester</th>
+                  <th>Subject</th>
+                  <th className='bg-success'>Status</th>
+                </tr>
+              </thead>
+              <tbody className='bg-info text-center'>
+                {acceptedRequests.length > 0 ? (
+                  acceptedRequests.map((request, index) => (
+                    <tr 
+                      key={index} 
+                      style={{ backgroundColor: request.status === 'Pending' ? 'white' : 'cyan' }} // Change color based on status
+                      >
+                      <td>{index + 1}</td>
+                      <td>{request.branch}</td> {/* Serial number */}
+                      {/* <td>{request.name}</td> */}
+                      <td>{new Date(request.leaveDate).toLocaleDateString()}</td>
+                      
+                      <td>{request.acceptedUserDetails ? request.acceptedUserDetails.name : 'N/A'}</td>
+                      <td>{request.acceptedUserDetails ? request.acceptedUserDetails.year : 'N/A'}</td>
+                      <td>{request.acceptedUserDetails ? request.acceptedUserDetails.sem : 'N/A'}</td>
+                      <td>{request.acceptedUserDetails ? request.acceptedUserDetails.subj : 'N/A'}</td>
+                      <td className='bg-white fw-bold text-success '>{request.status}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center">No accepted requests yet</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Home;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//leaveresponse.js
+
+code:
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Home from './details';
+
+
+
+function HomePage() {
+  return (
+    <div  className=' container  m-3  p-3 '>
+      {/* <nav className="navbar navbar-expand-lg navbar-light bg-dark p-3  rounded d-flex justifyContent-center alignItems-center ">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="/home">Class_Adjustment_System</a>
+          <div className="collapse navbar-collapse " id="navbarNav">
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item ">
+                <Link to="/leaveform" className="nav-link btn btn-primary mx-2">
+                  Apply_CAR
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/registration" className="nav-link btn btn-success mx-2">
+                  Register
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav> */}
+
+      <div className='bg-light'>
+      <div className=" container text-center ">
+        <h1>Welcome to the Class Adjustment System....👋</h1>
+        <p className="mt-3">
+          Use this platform to manage class adjustments efficiently.
+        </p>
+        <div className="mt-5">
+          <Link to="/leaveform" className="btn btn-primary mx-2">
+            Apply for Class Adjustment
+          </Link>
+          <Link to="/registration" className="btn btn-success mx-2">
+            Register Now
+          </Link>
+        </div>
+      </div>
+      </div>
+      <br></br>
+      <div className='  d-flex justifyContent-center  alignItems-center w-100 '>
+   <div className='m-2 p-3 container'>
+   <Home  />
+   </div>
+      </div>
+    </div>
+    
+  );
+}
+
+export default HomePage;
+------------------------------------------------------------------------------------------------------------------------------------
