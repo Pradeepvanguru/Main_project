@@ -47,6 +47,30 @@ function HomePage() {
           </div>
         </div>
       </div>
+     {/* Instructions */}
+      <div className="container bg-light p-3 my-4 rounded" style={back}>
+        <h5 className="text-center mb-3">📌 Instructions to Use</h5>
+        <ul className="text-dark text-start">
+          <li>➡️ First register yourself using the <b>Register Now</b> button.</li>
+          <li>➡️ Once registered, apply for class adjustment through the <b>Apply Here</b> form.</li>
+          <li>➡️ You can check your application status in the table below.</li>
+          <li>➡️ Make sure to provide valid details like ID, name, and timings.</li>
+        </ul>
+      </div>
+   {/* Warnings */}
+      <div className="container bg-warning p-3 my-4 rounded" style={{ opacity: 0.9 }}>
+        <h5 className="text-center mb-3">⚠️ Important Warnings</h5>
+        <ul className="text-dark text-start">
+          <li>❌ Do not submit multiple requests for the same day.</li>
+          <li>❌ Entering false information will lead to rejection.</li>
+          <li>❌ Unapproved leaves may result in disciplinary action.</li>
+        </ul>
+      </div>
+        {/* Footer */}
+      <footer className="bg-dark text-white text-center p-3 mt-4 rounded-top">
+        <p className="mb-1">© 2025 Class Adjustment System</p>
+        <small>For help, contact admin@gmrit.edu</small>
+      </footer>
     </div>
   );
 }
